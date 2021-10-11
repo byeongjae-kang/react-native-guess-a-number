@@ -38,7 +38,7 @@ function StartGameScreen(props) {
       return;
     }
     setIsConfirmed(true);
-    setSelectedNumber(enteredValue);
+    setSelectedNumber(chosenNumber);
     setEnteredValue("");
     Keyboard.dismiss();
   };
