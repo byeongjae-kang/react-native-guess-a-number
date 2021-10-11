@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Button, Alert } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import BodyText from "../components/BodyText";
 import Card from "../components/Card";
+import MainButton from "../components/MainButton";
 import NumberContainer from "../components/NumberContainer";
+import { AntDesign } from "@expo/vector-icons";
 
 const generateRandomBetween = (min, max, exclude) => {
   min = Math.ceil(min);
@@ -61,18 +63,13 @@ function GameScreen(props) {
       <BodyText>Opponent's Guess</BodyText>
       <NumberContainer>{currentGuess}</NumberContainer>
       <Card style={styles.buttonContainer}>
-        <View style={styles.button}>
-          <Button
-            title="Lower"
-            onPress={nextGuessHandler.bind(this, "lower")}
-          />
-        </View>
-        <View style={styles.button}>
-          <Button
-            title="Higher"
-            onPress={nextGuessHandler.bind(this, "higher")}
-          />
-        </View>
+        <MainButton onPress={nextGuessHandler.bind(this, "lower")}>
+          <AntDesign name="minuscircle" size={24} color="white" />
+        </MainButton>
+
+        <MainButton onPress={nextGuessHandler.bind(this, "higher")}>
+          <AntDesign name="pluscircle" size={24} color="white" />
+        </MainButton>
       </Card>
     </View>
   );
@@ -86,13 +83,10 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     marginBottom: 20,
     width: 300,
     maxWidth: "80%"
-  },
-  button: {
-    width: "40%"
   }
 });
 
