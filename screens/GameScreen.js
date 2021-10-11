@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Alert, FlatList } from "react-native";
+import { View, StyleSheet, Alert, FlatList, Dimensions } from "react-native";
 import BodyText from "../components/BodyText";
 import Card from "../components/Card";
 import MainButton from "../components/MainButton";
@@ -22,8 +22,22 @@ function GameScreen(props) {
   const initialGuess = generateRandomBetween(1, 100, userChoice);
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
   const [pastGuesses, setPastGuesses] = useState([initialGuess]);
+  const [screenHeight, setScreenHeight] = useState(
+    Dimensions.get("window").height
+  );
   const currentMin = useRef(1);
   const currentMax = useRef(100);
+
+  useEffect(() => {
+    const updateLayout = () => {
+      setScreenHeight(Dimensions.get("window").height);
+    };
+
+    Dimensions.addEventListener("change", updateLayout);
+    return () => {
+      Dimensions.removeEventListener("change", updateLayout);
+    };
+  });
 
   useEffect(() => {
     if (currentGuess === userChoice) {
@@ -57,19 +71,35 @@ function GameScreen(props) {
     setPastGuesses((existingGuesses) => [nextGuessNumber, ...existingGuesses]);
   };
 
-  return (
-    <View style={styles.screen}>
-      <BodyText>Opponent's Guess</BodyText>
-      <NumberContainer>{currentGuess}</NumberContainer>
-      <Card style={styles.buttonContainer}>
+  const rotatedViews =
+    screenHeight < 450 ? (
+      <View style={styles.control}>
         <MainButton onPress={nextGuessHandler.bind(this, "lower")}>
           <AntDesign name="minuscircle" size={24} color="white" />
         </MainButton>
-
+        <NumberContainer>{currentGuess}</NumberContainer>
         <MainButton onPress={nextGuessHandler.bind(this, "higher")}>
           <AntDesign name="pluscircle" size={24} color="white" />
         </MainButton>
-      </Card>
+      </View>
+    ) : (
+      <>
+        <NumberContainer>{currentGuess}</NumberContainer>
+        <Card style={styles.buttonContainer}>
+          <MainButton onPress={nextGuessHandler.bind(this, "lower")}>
+            <AntDesign name="minuscircle" size={24} color="white" />
+          </MainButton>
+          <MainButton onPress={nextGuessHandler.bind(this, "higher")}>
+            <AntDesign name="pluscircle" size={24} color="white" />
+          </MainButton>
+        </Card>
+      </>
+    );
+
+  return (
+    <View style={styles.screen}>
+      <BodyText>Opponent's Guess</BodyText>
+      {rotatedViews}
       <View style={styles.listContainer}>
         <FlatList
           contentContainerStyle={styles.list}
@@ -92,6 +122,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     alignItems: "center"
+  },
+  control: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "45%"
   },
   buttonContainer: {
     flexDirection: "row",
