@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "white",
     borderRadius: 12,
+    padding: 20,
     //for ios
     shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
