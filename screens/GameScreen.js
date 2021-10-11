@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert, FlatList } from "react-native";
 import BodyText from "../components/BodyText";
 import Card from "../components/Card";
 import MainButton from "../components/MainButton";
@@ -19,16 +19,15 @@ const generateRandomBetween = (min, max, exclude) => {
 
 function GameScreen(props) {
   const { userChoice, onGameOver } = props;
-  const [currentGuess, setCurrentGuess] = useState(
-    generateRandomBetween(1, 100, userChoice)
-  );
-  const [currentRound, setCurrentRound] = useState(0);
+  const initialGuess = generateRandomBetween(1, 100, userChoice);
+  const [currentGuess, setCurrentGuess] = useState(initialGuess);
+  const [pastGuesses, setPastGuesses] = useState([initialGuess]);
   const currentMin = useRef(1);
   const currentMax = useRef(100);
 
   useEffect(() => {
     if (currentGuess === userChoice) {
-      onGameOver(currentRound);
+      onGameOver(pastGuesses.length);
     }
   }, [currentGuess, userChoice, onGameOver]);
 
@@ -47,7 +46,7 @@ function GameScreen(props) {
       currentMax.current = currentGuess;
     }
     if (direction === "higher") {
-      currentMin.current = currentGuess;
+      currentMin.current = currentGuess + 1;
     }
     const nextGuessNumber = generateRandomBetween(
       currentMin.current,
@@ -55,7 +54,7 @@ function GameScreen(props) {
       currentGuess
     );
     setCurrentGuess(nextGuessNumber);
-    setCurrentRound((current) => current + 1);
+    setPastGuesses((existingGuesses) => [nextGuessNumber, ...existingGuesses]);
   };
 
   return (
@@ -71,6 +70,19 @@ function GameScreen(props) {
           <AntDesign name="pluscircle" size={24} color="white" />
         </MainButton>
       </Card>
+      <View style={styles.listContainer}>
+        <FlatList
+          contentContainerStyle={styles.list}
+          keyExtractor={(item) => item.toString()}
+          data={pastGuesses}
+          renderItem={(dataItem) => (
+            <View style={styles.listItem}>
+              <BodyText>#{pastGuesses.length - dataItem.index}</BodyText>
+              <BodyText>{dataItem.item}</BodyText>
+            </View>
+          )}
+        />
+      </View>
     </View>
   );
 }
@@ -87,6 +99,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: 300,
     maxWidth: "80%"
+  },
+  listContainer: {
+    width: "60%",
+    flex: 1
+  },
+  listItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: "black",
+    marginVertical: 15,
+    padding: 15,
+    width: "100%"
   }
 });
 
