@@ -5,7 +5,7 @@ Simple mobile application built with Expo and React Native.
  * Phone will guess the user's number
  * User gives hints by pressing + or - button 
   - "+" means number should be higher
-  - "-" means number should be lower)
+  - "-" means number should be lower
  * Game ends when the guessed number matches with the user's number
  * When game is over, user can see how many rounds phone needed to guess the number
 
